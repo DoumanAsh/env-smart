@@ -1,6 +1,6 @@
 [package]
 name = "env-smart"
-version = "1.0.0-alpha.1"
+version = "1.0.0-alpha.2"
 edition = "2018"
 description = "Proc macro to insert env vars into code"
 readme = "README.md"

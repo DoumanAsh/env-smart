@@ -25,5 +25,5 @@ use env_smart::env;
 
 static USER_AGENT: &str = env!("{CARGO_PKG_NAME}-{CARGO_PKG_VERSION}");
 
-assert_eq!(USER_AGENT, "env-smart-1.0.0-alpha.1");
+assert_eq!(USER_AGENT, "env-smart-1.0.0-alpha.2");
 ```

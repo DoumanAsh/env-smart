@@ -20,16 +20,17 @@
 //!
 //! static USER_AGENT: &str = env!("{CARGO_PKG_NAME}-{CARGO_PKG_VERSION}");
 //!
-//! assert_eq!(USER_AGENT, "env-smart-1.0.0-alpha.1");
+//! assert_eq!(USER_AGENT, "env-smart-1.0.0-alpha.2");
 //!
 //! static TEST: &str = env!("test-{CARGO_PKG_NAME}-{CARGO_PKG_VERSION}");
 //!
-//! assert_eq!(TEST, "test-env-smart-1.0.0-alpha.1");
+//! assert_eq!(TEST, "test-env-smart-1.0.0-alpha.2");
 //!
 //! assert_eq!(env!("{CARGO_PKG_NAME}"), "env-smart");
 //!
 //! assert_eq!(env!("CARGO_PKG_NAME"), "env-smart");
 //!
+//! #[cfg(not(windows))]
 //! assert_ne!(env!("PWD"), "PWD");
 //! ```
 
@@ -38,9 +39,13 @@
 
 use proc_macro::{TokenStream, TokenTree};
 
+use core::mem;
+use core::cell::UnsafeCell;
+
 use std::fs;
 use std::io::{self, BufRead};
 use std::collections::{hash_map, HashMap};
+use std::sync::Once;
 
 mod format;
 
@@ -100,6 +105,28 @@ fn read_envs() -> Result<HashMap<String, String>, TokenStream> {
     Ok(envs)
 }
 
+//Like imagine using lock for one time initialization
+type State = UnsafeCell<mem::MaybeUninit<Result<HashMap<String, String>, TokenStream>>>;
+struct Cache(State);
+unsafe impl Sync for Cache {}
+
+//This implementation may or may not in future, but at the current moment we can freely rely on
+//execution context to be shared between all instances of macro call
+fn read_cached_envs() -> &'static Result<HashMap<String, String>, TokenStream> {
+    static STATE: Cache = Cache(State::new(mem::MaybeUninit::uninit()));
+    static LOCK: Once = Once::new();
+
+    LOCK.call_once(|| {
+        unsafe {
+            *STATE.0.get() = mem::MaybeUninit::new(read_envs());
+        }
+    });
+
+    unsafe {
+        &*(STATE.0.get() as *const _)
+    }
+}
+
 struct Args {
     input: String,
 }
@@ -135,9 +162,9 @@ pub fn env(input: TokenStream) -> TokenStream {
         Ok(args) => args,
         Err(error) => return error,
     };
-    let envs = match read_envs() {
+    let envs = match read_cached_envs() {
         Ok(envs) => envs,
-        Err(error) => return error,
+        Err(error) => return error.clone(),
     };
 
     let mut output = String::new();
