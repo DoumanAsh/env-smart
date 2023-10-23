@@ -1,0 +1,18 @@
+[package]
+name = "env-smart"
+version = "1.0.0-alpha.1"
+edition = "2018"
+description = "Proc macro to insert env vars into code"
+readme = "README.md"
+repository = "https://github.com/DoumanAsh/env-smart"
+documentation = "https://docs.rs/nev-plus/"
+license = "BSL-1.0"
+keywords = ["env", "compile-time", "macro"]
+include = [
+    "**/*.rs",
+    "Cargo.toml",
+    "README.md"
+]
+
+[lib]
+proc-macro = true
