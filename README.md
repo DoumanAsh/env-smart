@@ -1,6 +1,6 @@
 # env-smart
 
-![Rust](https://github.com/DoumanAsh/env-smart/workflows/Rust/badge.svg?branch=master)
+[![Rust](https://github.com/DoumanAsh/env-smart/actions/workflows/rust.yml/badge.svg)](https://github.com/DoumanAsh/env-smart/actions/workflows/rust.yml)
 [![Crates.io](https://img.shields.io/crates/v/env-smart.svg)](https://crates.io/crates/env-smart)
 [![Documentation](https://docs.rs/env-smart/badge.svg)](https://docs.rs/crate/env-smart/)
 
