@@ -20,11 +20,11 @@
 //!
 //! static USER_AGENT: &str = env!("{CARGO_PKG_NAME}-{CARGO_PKG_VERSION}");
 //!
-//! assert_eq!(USER_AGENT, "env-smart-1.0.0-alpha.2");
+//! assert_eq!(USER_AGENT, "env-smart-1.0.0");
 //!
 //! static TEST: &str = env!("test-{CARGO_PKG_NAME}-{CARGO_PKG_VERSION}");
 //!
-//! assert_eq!(TEST, "test-env-smart-1.0.0-alpha.2");
+//! assert_eq!(TEST, "test-env-smart-1.0.0");
 //!
 //! assert_eq!(env!("{CARGO_PKG_NAME}"), "env-smart");
 //!
