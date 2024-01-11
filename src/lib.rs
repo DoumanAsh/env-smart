@@ -20,11 +20,11 @@
 //!
 //! static USER_AGENT: &str = env!("{CARGO_PKG_NAME}-{CARGO_PKG_VERSION}");
 //!
-//! assert_eq!(USER_AGENT, "env-smart-1.0.0");
+//! assert_eq!(USER_AGENT, "env-smart-1.0.1");
 //!
 //! static TEST: &str = env!("test-{CARGO_PKG_NAME}-{CARGO_PKG_VERSION}");
 //!
-//! assert_eq!(TEST, "test-env-smart-1.0.0");
+//! assert_eq!(TEST, "test-env-smart-1.0.1");
 //!
 //! assert_eq!(env!("{CARGO_PKG_NAME}"), "env-smart");
 //!
@@ -58,6 +58,7 @@ fn compile_error(error: &str) -> TokenStream {
 }
 
 fn read_envs() -> Result<HashMap<String, String>, TokenStream> {
+    const QUOTES: &[char] = &['"', '\''];
     let mut envs = HashMap::default();
 
     match fs::File::open(".env") {
@@ -69,7 +70,7 @@ fn read_envs() -> Result<HashMap<String, String>, TokenStream> {
                         let mut split = line.splitn(2, '=');
                         let key = split.next().unwrap();
                         let value = match split.next() {
-                            Some(value) => value,
+                            Some(value) => value.trim_matches(QUOTES),
                             None => return Err(compile_error(&format!(".env file has '{key}' without value"))),
                         };
 
